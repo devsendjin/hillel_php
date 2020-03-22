@@ -1,13 +1,13 @@
-# Docker-compose
+# Explanation
 
-1. Apache + PHP
-php:7.4.1-apache + Dockerfile
-https://hub.docker.com/_/php
-
-2. PostgreSQL
-postgres:12.1
-https://hub.docker.com/_/postgres
-
-3. Adminer - интерфейс для управления БД
-adminer:4.7.5
-https://hub.docker.com/_/adminer
+##### Every lesson located in separate branch with respective names.
+So copy link to your terminal
+````
+git clone https://github.com/jsCodev/hillel_php.git
+cd hillel_php
+git branch --all
+````
+And then
+````
+git checkout [needle_branch_name]
+````

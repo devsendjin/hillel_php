@@ -11,3 +11,8 @@ https://hub.docker.com/_/postgres
 3. Adminer - интерфейс для управления БД
 adminer:4.7.5
 https://hub.docker.com/_/adminer
+
+````sh
+git clone https://github.com/jsCodev/hillel_php.git
+git checkout l3-homework
+````

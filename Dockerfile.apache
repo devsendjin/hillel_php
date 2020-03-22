@@ -1,0 +1,14 @@
+FROM php:7.4.1-apache
+
+RUN apt-get update
+
+RUN apt-get install libpq-dev -y
+
+RUN apt-get install nano -y
+
+RUN docker-php-ext-install pdo_pgsql
+
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+COPY .docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini

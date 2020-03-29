@@ -3,7 +3,15 @@
 
 namespace App;
 
-
+/**
+ * Class QueryCreator
+ * @package App
+ * @method static findById(int $id)
+ * @method static findByEmailAndByStatus(string $email, string $status)
+ * @method static findBetweenCreatedAt(string $startDate, string $endDate)
+ * @method static findBetweenCreatedAtAndByStatus(string $startDate, string $endDate, string $status)
+ * @method static findBetweenCreatedAtAndInStatus(string $startDate, string $endDate, string[] $states)
+ */
 class QueryCreator
 {
 
@@ -22,7 +30,7 @@ class QueryCreator
                 $statement = 'SELECT * FROM `' . self::TABLE_NAME . '` WHERE created_at BETWEEN ' . $arguments[0] . ' AND ' . $arguments[1];
                 break;
             case 'findBetweenCreatedAtAndByStatus':
-                $statement = 'SELECT * FROM `' . self::TABLE_NAME . '` WHERE created_at BETWEEN ' . $arguments[0] . ' AND ' . $arguments[1] . ' AND status = ' . $arguments[3];
+                $statement = 'SELECT * FROM `' . self::TABLE_NAME . '` WHERE created_at BETWEEN ' . $arguments[0] . ' AND ' . $arguments[1] . ' AND status = ' . $arguments[2];
                 break;
             case 'findBetweenCreatedAtAndInStatus':
                 if (!is_array($arguments[2])) {

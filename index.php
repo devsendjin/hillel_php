@@ -1,48 +1,20 @@
 <?php
 
-//require_once 'vendor/autoload.php';
-require_once 'vendor/own_autoload.php';
+require_once 'vendor/autoload.php';
 
-use AnotherSrc\Test;
-use App\Money;
-use App\Test\Currency;
+use App\QueryCreator;
 
-$uah = new Currency('UAH');
-$usd = new Currency('USD');
+echo QueryCreator::findById(4);
+echo '<br><br>';
 
-//equality
-var_dump($uah->equals($usd));
+echo QueryCreator::findByEmailAndByStatus('test@gmail.com', 'active');
+echo '<br><br>';
 
-$uahAmount = new Money(5, $uah);
-$uahAmount1 = new Money(10, $uah);
-$usdAmount = new Money(20, $usd);
-$usdAmount1 = new Money(30, $usd);
-$usdAmount2 = new Money(40, $usd);
+echo QueryCreator::findBetweenCreatedAt('29.02.2020', '31.03.2020');
+echo '<br><br>';
 
-echo '<p>fullName</p>';
-echo Money::fullName($uahAmount);
-echo '<br>';
-echo Money::fullName($usdAmount);
-echo '<br>';
+echo QueryCreator::findBetweenCreatedAtAndByStatus('29.02.2020', '31.03.2020', 'active');
+echo '<br><br>';
 
-//equality UAH
-echo '<p>equality UAH</p>';
-var_dump($uahAmount->equals($uahAmount1));
-echo '<br>';
-
-//equality USD
-echo '<p>equality USD</p>';
-var_dump($usdAmount->equals($usdAmount1));
-echo '<br>';
-
-//sum USD
-echo '<p>sum USD</p>';
-echo $usdAmount->add([$usdAmount1, $usdAmount2]);
-echo '<br>';
-
-//sum UAH
-echo '<p>sum UAH</p>';
-echo $uahAmount->add([$uahAmount1]);
-echo '<br>';
-
-new Test();
+echo QueryCreator::findBetweenCreatedAtAndInStatus('29.02.2020', '31.03.2020', ['active', 'passive']);
+echo '<br><br>';

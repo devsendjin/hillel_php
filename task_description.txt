@@ -1,10 +1,12 @@
-Работа с автозагрузчиком классов по стандарту PSR-4
+Практика работы с магическим методом __callStatic
+Написать класс с реализацией метода __callStatic, который будет формировать SELECT запрос в зависимости от названия вызываемого метода и переданных аргументов.
 
-1. Создать себе проект с работающим отладчиком
-2. Исследовать принцип работы готового класса автозагрузки https://www.php-fig.org/psr/psr-4/examples/#class-example с помощью отладчика.
-    2.1 Создать каталог src
-    2.2 Создать любой класс в каталоге/подкаталоге src
-    2.3 По примеру урока создать файл автозагрузки vendor/autoload.php и поместить в него класс из ссылки
-    2.4 Повторить проделанное на уроке
-    2.5 Понять предназначение функции spl_autoload_register
-3.Создать свой собственный класс автозагрузки (упрощённый) по примеру класса Psr4AutoloaderClass
+findById($id); // SELECT * FROM <table> WHERE id = :id
+
+findByEmailAndByStatus($email, $status); // SELECT * FROM <table> WHERE email = :email AND status = :status
+
+findBetweenCreatedAt($startDate, $endDate); // SELECT * FROM <table> WHERE created_at BETWEEN :start_date AND :end_date
+
+findBetweenCreatedAtAndByStatus($startDate, $endDate, $status); // SELECT * FROM <table> WHERE created_at BETWEEN :start_date AND :end_date AND status = :status
+
+findBetweenCreatedAtAndInStatus($startDate, $endDate, $states); // SELECT * FROM <table> WHERE created_at BETWEEN :start_date AND :end_date AND status IN (:status_0, :status_1)

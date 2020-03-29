@@ -2,24 +2,20 @@
 
 class MyAutoload
 {
-    /** @var array [prefix => folder] */
+    /** @var array[] */
     private array $prefixes = [];
 
     public function register()
     {
         spl_autoload_register(function ($class) {
 
-            //prefix of current class
-            $currentPrefix = substr($class, 0, strpos($class, '\\'));
-
-            //class namespace string without prefix
-            $pathWithoutPrefix = substr($class, strpos($class, '\\'));
-
             foreach ($this->prefixes as $prefix => $base_dir) {
-                if ($prefix === $currentPrefix) {
+                if (0 === strpos($class, $prefix)) {
+                    $pathWithoutPrefix = str_replace($prefix, '', $class);
                     $file = $base_dir . str_replace('\\', '/', $pathWithoutPrefix) . '.php';
                 }
             }
+
             if (file_exists($file)) {
                 require_once $file;
             }
@@ -46,4 +42,5 @@ class MyAutoload
 $autoloader = new MyAutoload();
 $autoloader->addNamespace('App', 'src');
 $autoloader->addNamespace('AnotherSrc', 'app');
+$autoloader->addNamespace('Example\Something', 'example');
 $autoloader->register();

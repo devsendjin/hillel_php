@@ -6,6 +6,11 @@ require_once 'vendor/own_autoload.php';
 use AnotherSrc\Test;
 use App\Money;
 use App\Test\Currency;
+use Example\Something\Somehandler;
+
+new Somehandler();
+
+new Test();
 
 $uah = new Currency('UAH');
 $usd = new Currency('USD');
@@ -44,5 +49,3 @@ echo '<br>';
 echo '<p>sum UAH</p>';
 echo $uahAmount->add([$uahAmount1]);
 echo '<br>';
-
-new Test();

@@ -3,7 +3,7 @@
 
 namespace App;
 
-use Currency\Util\CurrencySymbolUtil;
+use App\test\Currency;
 
 class Money
 {
@@ -58,7 +58,7 @@ class Money
      */
     static function fullName(Money $moneyInstance): string
     {
-        return $moneyInstance->amount . ' ' . CurrencySymbolUtil::getSymbol($moneyInstance->getCurrency());
+        return $moneyInstance->amount . ' ' . $moneyInstance->getCurrency();
     }
 
     /**
@@ -93,6 +93,6 @@ class Money
             $totalAmount += $moneyInstance->amount;
         }
 
-        return $totalAmount . ' ' . CurrencySymbolUtil::getSymbol($this->getCurrency());
+        return $totalAmount . ' ' . $this->getCurrency();
     }
 }

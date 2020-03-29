@@ -1,10 +1,11 @@
 <?php
-//declare(strict_types=1);
 
-use App\Currency;
+//require_once 'vendor/autoload.php';
+require_once 'vendor/own_autoload.php';
+
+use AnotherSrc\Test;
 use App\Money;
-
-require_once 'vendor/autoload.php';
+use App\Test\Currency;
 
 $uah = new Currency('UAH');
 $usd = new Currency('USD');
@@ -43,3 +44,5 @@ echo '<br>';
 echo '<p>sum UAH</p>';
 echo $uahAmount->add([$uahAmount1]);
 echo '<br>';
+
+new Test();

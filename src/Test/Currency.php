@@ -1,20 +1,17 @@
 <?php
 
-namespace App;
-
-use Currency\Util\CurrencySymbolMapping;
+namespace App\test;
 
 class Currency
 {
     /** @var array of strings */
-    private array $CURRENCIES;
+    private array $CURRENCIES = ['UAH', 'USD'];
 
     /** @var string */
     private string $isoCode;
 
     public function __construct($isoCode)
     {
-        $this->CURRENCIES = array_keys(CurrencySymbolMapping::values());
         $this->setIsoCode($isoCode);
     }
 

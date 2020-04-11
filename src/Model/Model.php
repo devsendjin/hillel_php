@@ -47,21 +47,40 @@ abstract class Model
         return $instance;
     }
 
-    public function create(): void
+    /**
+     * @param string[] $fieldNames
+     */
+    public function create(array $fieldNames = []): void
     {
+        if (empty($fieldNames)) {
+            throw new \InvalidArgumentException('Field names are not specified');
+        }
+
         try {
-            $sql = 'insert into `' . static::getTable() . '` values(:id, :name, :email)';
+            //формируем sql выражение
+            $sql = 'insert into `' . static::getTable() . '` values(:id, ';
+            foreach ($fieldNames as $index => $fieldName) {
+                $sql .= $index === count($fieldNames)-1 ? ":$fieldName" : ":$fieldName, ";
+            }
+            $sql .= ')';
             $stmt = static::$db->prepare($sql);
             $stmt->bindParam(':id', $this->getId());
-            $stmt->bindParam(':name', $this->getName());
-            $stmt->bindParam(':email', $this->getEmail());
+
+            //биндим параметры
+            foreach ($fieldNames as $fieldName) {
+                $methodName = 'get' . ucfirst($fieldName);
+                $stmt->bindParam(":$fieldName", $this->$methodName());
+            }
             $stmt->execute();
         } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();
         }
     }
 
-    public function read()
+    /**
+     * @return array
+     */
+    public function read(): array
     {
         try {
             $sql = 'select * from `' . static::getTable() . '` where `id`=:id';
@@ -74,14 +93,31 @@ abstract class Model
         }
     }
 
-    public function update(): void
+    /**
+     * @param string[] $fieldNames
+     */
+    public function update(array $fieldNames = []): void
     {
+        if (empty($fieldNames)) {
+            throw new \InvalidArgumentException('Field names are not specified');
+        }
+
         try {
-            $sql = 'update `' . static::getTable() . '` set `name` = :name, `email` = :email where `id`=:id';
+            $sql = 'update `' . static::getTable() . '` set ';
+
+            //формируем sql выражение
+            foreach ($fieldNames as $index => $fieldName) {
+                $sql .= $index === count($fieldNames)-1 ? "`$fieldName`=:$fieldName" : "`$fieldName`=:$fieldName, ";
+            }
+            $sql .= ' where `id`=:id';
             $stmt = static::$db->prepare($sql);
             $stmt->bindParam(':id', $this->getId());
-            $stmt->bindParam(':name', $this->getName());
-            $stmt->bindParam(':email', $this->getEmail());
+
+            //биндим параметры
+            foreach ($fieldNames as $fieldName) {
+                $methodName = 'get' . ucfirst($fieldName);
+                $stmt->bindParam(":$fieldName", $this->$methodName());
+            }
             $stmt->execute();
         } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();

@@ -4,7 +4,7 @@ require_once 'vendor/autoload.php';
 
 use App\Model\{Database, Model, User, Post};
 
-$dbInstance = Database::getInstance();
+$dbInstance = Database::getInstance()->getConnection();
 Model::dbConnect($dbInstance);
 
 /*

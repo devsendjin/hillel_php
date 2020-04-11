@@ -6,27 +6,34 @@ namespace App\Model;
 
 final class Database
 {
-    protected static \PDO $instance;
+    private static $instance = null;
+    private \PDO $connection;
 
-    public static function getInstance() {
-        if(empty(self::$instance)) {
-            $db_info = array(
-                "db_host" => "mysql",
-                "db_port" => "3306",
-                "db_user" => "root",
-                "db_pass" => "1",
-                "db_name" => "crud",
-                "db_charset" => "UTF-8");
-            try {
-                self::$instance = new \PDO("mysql:host=".$db_info['db_host'].';port='.$db_info['db_port'].';dbname='.$db_info['db_name'], $db_info['db_user'], $db_info['db_pass']);
-                self::$instance->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
-                self::$instance->query('SET NAMES utf8');
-                self::$instance->query('SET CHARACTER SET utf8');
-            } catch(\PDOException $error) {
-                echo $error->getMessage();
-            }
+    private string $host = 'mysql';
+    private string $user = 'root';
+    private string $pass = '1';
+    private string $name = 'crud';
+
+    // The db connection is established in the private constructor.
+    private function __construct()
+    {
+        $this->connection = new \PDO("mysql:host={$this->host}; dbname={$this->name}", $this->user,$this->pass,
+                             array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    }
+
+    public static function getInstance(): self
+    {
+        if(!self::$instance)
+        {
+            self::$instance = new self;
         }
+
         return self::$instance;
+    }
+
+    public function getConnection(): \PDO
+    {
+        return $this->connection;
     }
 
 }

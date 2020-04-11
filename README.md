@@ -1,9 +1,9 @@
-# OOP Магические методы в PHP
+# Наследование. Абстрактный класс
 
 ````sh
 git clone https://github.com/jsCodev/hillel_php.git && \
 cd hillel_php && \
-git checkout l7-homework
+git checkout l8-homework
 
 docker-compose up
 

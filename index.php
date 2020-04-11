@@ -2,19 +2,56 @@
 
 require_once 'vendor/autoload.php';
 
-use App\QueryCreator;
+use App\Model\{Model, User, Post};
 
-echo QueryCreator::findById(4);
-echo '<br><br>';
+Model::dbConnect();
 
-echo QueryCreator::findByEmailAndByStatus('test@gmail.com', 'active');
-echo '<br><br>';
+/*
+//FIND USER - static
+$foundUser = User::find(3);
+var_dump($foundUser);
+*/
 
-echo QueryCreator::findBetweenCreatedAt('29.02.2020', '31.03.2020');
-echo '<br><br>';
 
-echo QueryCreator::findBetweenCreatedAtAndByStatus('29.02.2020', '31.03.2020', 'active');
-echo '<br><br>';
+/*
+//CREATE USER
+$user = new User(3, 'Third name', 'third.mail@gmail.com');
+$user->create();
+var_dump($user);
+*/
 
-echo QueryCreator::findBetweenCreatedAtAndInStatus('29.02.2020', '31.03.2020', ['active', 'passive']);
-echo '<br><br>';
+
+/*
+//CREATE POST
+$post = new Post(2, 'Second post', 'Second post content');
+$post->create();
+var_dump($post);
+*/
+
+
+/*
+//READ USER
+$foundUser = User::find(3);
+$foundUserData = $foundUser->read();
+foreach ($foundUserData as $fieldName => $value) {
+    echo "$fieldName - $value <br>";
+}
+*/
+
+
+/*
+//UPDATE USER
+$foundUser = User::find(3);
+$foundUser->setName('some test name 3');
+$foundUser->setEmail('some test email 3');
+$foundUser->update();
+var_dump(User::find(3));
+*/
+
+
+/*
+//DELETE USER
+$foundUser = User::find(3);
+$foundUser->delete();
+var_dump(User::find(3));
+*/

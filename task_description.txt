@@ -1,12 +1,9 @@
-Практика работы с магическим методом __callStatic
-Написать класс с реализацией метода __callStatic, который будет формировать SELECT запрос в зависимости от названия вызываемого метода и переданных аргументов.
+Работа с абстрактным классом
+Реализовать абстрактный класс Model. В классе должно быть 4 метода:
 
-findById($id); // SELECT * FROM <table> WHERE id = :id
+- статический find($id)
+- create
+- update
+- delete
 
-findByEmailAndByStatus($email, $status); // SELECT * FROM <table> WHERE email = :email AND status = :status
-
-findBetweenCreatedAt($startDate, $endDate); // SELECT * FROM <table> WHERE created_at BETWEEN :start_date AND :end_date
-
-findBetweenCreatedAtAndByStatus($startDate, $endDate, $status); // SELECT * FROM <table> WHERE created_at BETWEEN :start_date AND :end_date AND status = :status
-
-findBetweenCreatedAtAndInStatus($startDate, $endDate, $states); // SELECT * FROM <table> WHERE created_at BETWEEN :start_date AND :end_date AND status IN (:status_0, :status_1)
+Создать класс User, который будет наследовать класс Model и отработать CRUD операции (create, read, update, delete).

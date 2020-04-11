@@ -2,14 +2,16 @@
 
 require_once 'vendor/autoload.php';
 
-use App\Model\{Model, User, Post};
+use App\Model\{Database, Model, User, Post};
 
-Model::dbConnect();
+$dbInstance = Database::getInstance();
+Model::dbConnect($dbInstance);
 
 /*
 //FIND USER - static
-$foundUser = User::find(3);
-var_dump($foundUser);
+var_dump(User::find(1));
+var_dump(User::find(2));
+var_dump(User::find(3));
 */
 
 

@@ -2,19 +2,23 @@
 
 namespace App\Model;
 
+use PDO;
+use PDOException;
+
 abstract class Model
 {
-    private static \PDO $db;
+    private static PDO $db;
 
     abstract static function getTable(): string;
     abstract function getId(): ?int;
 
     /**
      * static method for database connection
+     * @param PDO $db
      */
-    public static function dbConnect(): void
+    public static function dbConnect(PDO $db): void
     {
-        static::$db = new  \PDO('mysql:host=mysql;dbname=crud;', 'root', 1);
+        static::$db = $db;
     }
 
     /**
@@ -28,8 +32,8 @@ abstract class Model
             $stmt = static::$db->prepare($sql);
             $stmt->bindValue(':id', $id);
             $stmt->execute();
-            $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $error) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();
         }
 
@@ -52,7 +56,7 @@ abstract class Model
             $stmt->bindParam(':name', $this->getName());
             $stmt->bindParam(':email', $this->getEmail());
             $stmt->execute();
-        } catch (\PDOException $error) {
+        } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();
         }
     }
@@ -64,8 +68,8 @@ abstract class Model
             $stmt = static::$db->prepare($sql);
             $stmt->bindParam(':id', $this->getId());
             $stmt->execute();
-            return $stmt->fetch(\PDO::FETCH_ASSOC);
-        } catch (\PDOException $error) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();
         }
     }
@@ -79,7 +83,7 @@ abstract class Model
             $stmt->bindParam(':name', $this->getName());
             $stmt->bindParam(':email', $this->getEmail());
             $stmt->execute();
-        } catch (\PDOException $error) {
+        } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();
         }
 
@@ -92,7 +96,7 @@ abstract class Model
             $stmt = static::$db->prepare($sql);
             $stmt->bindParam(':id', $this->getId());
             $stmt->execute();
-        } catch (\PDOException $error) {
+        } catch (PDOException $error) {
             echo $sql . "<br>" . $error->getMessage();
         }
     }

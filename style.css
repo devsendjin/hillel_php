@@ -1,0 +1,94 @@
+@keyframes jelly {
+    0%,
+    100% {
+        transform: scale(1, 1);
+    }
+    25% {
+        transform: scale(0.9, 1.1);
+    }
+    50% {
+        transform: scale(1.1, 0.9);
+    }
+    75% {
+        transform: scale(0.95, 1.05);
+    }
+}
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+h1 {
+    font-size: 52px;
+    font-weight: bold;
+}
+
+h1 span {
+    display: inline-block;
+    font-size: 72px;
+    color: #ff0000;
+}
+
+h1 span:hover {
+    animation: jelly 0.5s;
+}
+
+.links {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.links a {
+    font-size: 32px;
+    font-weight: bold;
+    text-decoration: none;
+    position: relative;
+}
+
+.links a:hover {
+    animation: jelly 0.5s;
+}
+
+.links a:hover:after {
+    width: 100%;
+}
+
+.links a:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0;
+    background-color: currentColor;
+    transition: width .3s;
+}
+
+.links a:visited {
+    color: #2196F3;
+}
+
+.links a:not(:last-child) {
+    margin-right: 20px;
+}

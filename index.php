@@ -2,70 +2,36 @@
 
 require_once 'vendor/autoload.php';
 
-use App\Model\{Database, Model, User, Post};
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $router) {
+    $router->addRoute('GET', '/', 'pages/index.html');
+    $router->addRoute('GET', '/blog', 'pages/blog-full.html');
+    $router->addRoute('GET', '/services', 'pages/services.html');
+    $router->addRoute('GET', '/team', 'pages/team.html');
+    $router->addRoute('GET', '/contact-us', 'pages/contact.html');
+});
 
-$dbInstance = Database::getInstance()->getConnection();
-Model::dbConnect($dbInstance);
+// Fetch method and URI from somewhere
+$httpMethod = $_SERVER['REQUEST_METHOD'];
+$uri = $_SERVER['REQUEST_URI'];
 
-/*
-//FIND USER / POST - static
-var_dump(User::find(1));
-
-var_dump(Post::find(1));
-*/
-
-
-/*
-//CREATE USER / POST
-$user = new User(4, 'Fourth name', 'fourth.mail@gmail.com');
-$user->create(['name', 'email']);
-var_dump(User::find(4));
-
-$post = new Post(3, 'Third post title', 'Third post content');
-$post->create(['title', 'content']);
-var_dump(Post::find(3));
-*/
-
-
-/*
-//READ USER /POST
-$foundUser = User::find(3);
-$foundUserData = $foundUser->read();
-foreach ($foundUserData as $fieldName => $value) {
-    echo "$fieldName - $value <br>";
+// Strip query string (?foo=bar) and decode URI
+if (false !== $pos = strpos($uri, '?')) {
+    $uri = substr($uri, 0, $pos);
 }
+$uri = rawurldecode($uri);
 
-$foundPost = Post::find(3);
-$foundPostData = $foundPost->read();
-foreach ($foundPostData as $fieldName => $value) {
-    echo "$fieldName - $value <br>";
+$routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+switch ($routeInfo[0]) {
+    case FastRoute\Dispatcher::NOT_FOUND:
+        require_once 'pages/404.html';
+        break;
+    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+        $allowedMethods = $routeInfo[1];
+        // ... 405 Method Not Allowed
+        break;
+    case FastRoute\Dispatcher::FOUND:
+        $handler = $routeInfo[1];
+        $vars = $routeInfo[2];
+        require_once $handler;
+        break;
 }
-*/
-
-
-/*
-//UPDATE USER / POST
-$foundUser = User::find(4);
-$foundUser->setName('Fourth name 4');
-$foundUser->setEmail('some test email 4');
-$foundUser->update(['name']);
-var_dump(User::find(4));
-
-$foundPost = Post::find(4);
-$foundPost->setName('Fourth name 4');
-$foundPost->setEmail('some test email 4');
-$foundPost->update(['name']);
-var_dump(Post::find(4));
-*/
-
-
-/*
-//DELETE USER / POST
-$foundUser = User::find(3);
-$foundUser->delete();
-var_dump(User::find(3));
-
-$foundPost = Post::find(3);
-$foundPost->delete();
-var_dump(Post::find(3));
-*/

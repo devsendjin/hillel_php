@@ -4,7 +4,7 @@ services:
     container_name: apache
     build:
       context: .
-      dockerfile: Dockerfile.apache
+      dockerfile: Dockerfile
     ports:
       - 8085:80
     volumes:

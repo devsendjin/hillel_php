@@ -8,3 +8,12 @@ RUN pecl install xdebug \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY .docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y git && \
+    apt-get install -y zip
+
+RUN a2enmod rewrite
+
+RUN service apache2 restart

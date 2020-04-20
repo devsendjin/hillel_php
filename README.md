@@ -3,7 +3,7 @@
 ````sh
 git clone https://github.com/jsCodev/hillel_php.git && \
 cd hillel_php && \
-git checkout l11-homework
+git checkout l10-homework
 
 docker-compose up
 

@@ -9,3 +9,5 @@ docker-compose up
 
 localhost:8085
 ````
+
+##### Execute ``composer install`` inside apache2 container

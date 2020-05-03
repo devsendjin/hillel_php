@@ -1,9 +1,9 @@
-# MVC. Router. Регулярные выражения. Reflections
+# Хеширование паролей
 
 ````sh
 git clone https://github.com/jsCodev/hillel_php.git && \
 cd hillel_php && \
-git checkout l10-homework
+git checkout l11-homework
 
 docker-compose up
 

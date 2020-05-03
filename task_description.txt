@@ -1,11 +1,121 @@
-Создание маршрутов для разных страниц
-Используя файлы в архиве rounting.zip, а конкретно в файле index.php создать маршруты для разных страниц и подключить соответствующие файлы шаблонов через require_once.
+Хеширование паролей
 
-Необходимо создать маршруты:
-/ - index.html
-/blog - blog-full.html
-/services - services.html
-/team - team.html
-/contact-us - contact.html
+Дан интерфейс алгоритма хеширования пароля.
+<?php
+declare(strict_types=1);
 
-P.S.: Разрешается реализовать на основе аннотаций к методам контроллеров как мы делали на уроке
+namespace App\Algorithm;
+
+/**
+ * Interface AlgorithmInterface
+ * @package Hash\Algorithm
+ */
+interface AlgorithmInterface
+{
+    /**
+     * @return string
+     */
+    public function getIdentifier(): string;
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array;
+}
+
+Метод getIdentifier возвращает номер алгоритма. Номера алгоритом можно достать и констант на странице https://www.php.net/manual/ru/function.password-hash.php
+Метод getOptions возвращает массив настроек того или иного алгоритма.
+
+Далее имеется интерфейс Пароль.
+<?php
+declare(strict_types=1);
+
+namespace App;
+
+use App\Algorithm\AlgorithmInterface;
+
+/**
+ * Interface PasswordInterface
+ * @package Hash
+ */
+interface PasswordInterface
+{
+    /**
+     * @param AlgorithmInterface $algorithm
+     * @return string
+     */
+    public function hash(AlgorithmInterface $algorithm): string;
+
+    /**
+     * @param string $hash
+     * @return bool
+     */
+    public function verify(string $hash): bool;
+
+    /**
+     * @param $hash
+     * @param AlgorithmInterface $algorithm
+     * @return bool
+     */
+    public static function needsRehash($hash, AlgorithmInterface $algorithm): bool;
+}
+
+Методы hash, verify и needsRehash соответсвтуют аналогичным php-шным функциям для работы с паролями и их хешами.
+Задача:
+Создать три класса: Bcrypt, Argon2i, Argon2id, которые будут имплементировать AlgorithmInterface.
+Создать класс Password, который будет имплементировать PasswordInterface.
+Argon2i и Argon2id реализовать через наследование от абстрактного класса для сокращения повторяющегося кода. (сначала можете реализовать без наследования, потом поймёте, что можно сократить и воспользуйтесь наследованием).
+
+В конечном результате код из indexphp должен стать рабочим:
+<?php
+
+require_once '../vendor/autoload.php';
+
+$password = new \App\Password('12345678');
+
+/* Bcrypt */
+
+// 1. Хеширование
+$bcrypt = new \App\Algorithm\Bcrypt();
+$password->hash($bcrypt); //$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6
+
+// 2. Проверка хеша
+$password = new \App\Password('12345678');
+$password->verify('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6'); //true
+$password->verify('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp61'); //false
+
+// 3. Проверка на соответствие алгоритму
+\App\Password::needsRehash('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6', $bcrypt); //false
+\App\Password::needsRehash('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6', new \App\Algorithm\Bcrypt(null, 12)); //true
+
+/* Argon2i */
+
+// 1. Хеширование
+$argon2i = new \App\Algorithm\Argon2i();
+$password->hash($argon2i); //$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE
+
+// 2. Проверка хеша
+$password = new \App\Password('12345678');
+$password->verify('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE'); //true
+$password->verify('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE1'); //false
+
+// 3. Проверка на соответствие алгоритму
+\App\Password::needsRehash('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE', $argon2i); //false
+\App\Password::needsRehash('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE1', new \App\Algorithm\Argon2i(100)); //true
+
+/* Argon2id */
+
+// 1. Хеширование
+$argon2id = new \App\Algorithm\Argon2id();
+$password->hash($argon2id); //$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw
+
+// 2. Проверка хеша
+$password = new \App\Password('12345678');
+$password->verify('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw'); //true
+$password->verify('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw1'); //false
+
+// 3. Проверка на соответствие алгоритму
+\App\Password::needsRehash('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw', $argon2id); //false
+\App\Password::needsRehash('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw', new \App\Algorithm\Argon2id(100)); //true
+
+Изучите конечный результат и приступайте к реализации классов.

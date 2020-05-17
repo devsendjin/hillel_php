@@ -1,0 +1,36 @@
+{% extends 'index.html.twig' %}
+
+{% block head %}
+    {% block css_files %}
+        {{ parent() }}
+    {% endblock %}
+    {% block title %}<title>User with posts</title>{% endblock %}
+{% endblock %}
+
+{% block pageClass %}page-user-posts{% endblock %}
+
+{% block content %}
+    {% include 'includes/user-card.html.twig' with {'user': user, 'postsLink': false}%}
+{% endblock %}
+
+{% block sidebar %}
+    <aside class="sidebar">
+        {% if posts %}
+            <div class="posts-box">
+                {% for post in posts %}
+                    <div class="post wow animate__animated animate__fadeInDown" data-wow-duration="1s" data-wow-delay="{{ loop.index * 0.3 }}s">
+                        <a href="{{ postsUrl ~ post.id }}"
+                           class="image-box">
+                            <img src="{{ imagesUrlPost ~ post.imageUrl }}"
+                                 alt="{{ post.title }}"
+                                 title="{{ post.title }}"
+                                 class="image">
+                        </a>
+                        <div class="description">{{ post.shortDescription }}</div>
+                        <div class="date">{{ post.createdAt|date('d.m.y') }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </aside>
+{% endblock %}

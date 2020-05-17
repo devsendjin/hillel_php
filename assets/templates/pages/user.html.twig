@@ -1,0 +1,15 @@
+{% extends 'index.html.twig' %}
+
+{% block head %}
+    {% block css_files %}
+        {{ parent() }}
+    {% endblock %}
+    {% block title %}<title>User page</title>{% endblock %}
+{% endblock %}
+
+{% block pageClass %}page-user{% endblock %}
+
+{% block content %}
+    <h1 class="title wow animate__animated animate__lightSpeedInLeft" data-wow-duration="1s">{{ user.name}}'s profile</h1>
+    {% include 'includes/user-card.html.twig' with {'user': user, 'postsLink': true}%}
+{% endblock %}

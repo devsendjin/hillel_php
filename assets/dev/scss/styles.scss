@@ -1,0 +1,455 @@
+@import 'reset';
+@import 'mixins';
+@import 'animate';
+
+$roboto: 'Roboto', sans-serif;
+$green: #05cc9e;
+$easing: cubic-bezier(0.52, 1.64, 0.37, 0.66);
+
+@keyframes jelly {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(0.9, 1.1);
+  }
+  50% {
+    transform: scale(1.1, 0.9);
+  }
+  75% {
+    transform: scale(0.95, 1.05);
+  }
+}
+
+%hover-animation {
+  position: relative;
+  z-index: 1;
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: darken(#ebebeb, 10%);
+    transform-origin: bottom center;
+    transform: scaleY(0.05);
+    transition: transform 0.5s ease-out;
+  }
+  &:hover {
+    &::before {
+      transform: scaleY(1);
+      transition-timing-function: $easing;
+    }
+  }
+}
+
+%link {
+  font-weight: bold;
+  font-size: 20px;
+  position: relative;
+  span {
+    color: #05cc9e;
+    display: inline-block;
+  }
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background-color: lighten(#000000, 30%);
+    transition: width .3s $easing;
+  }
+  &:hover {
+    &:before {
+      width: 100%;
+    }
+    span {
+      animation: jelly 0.5s;
+    }
+  }
+}
+
+%bd {
+  border: 1px solid #000000;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 45px;
+  background-color: #dddddd;
+  color: #ffffff;
+  background-image: linear-gradient(to right,#6253e1,#852d91,#a3a1ff,#f24645);
+  border-radius: 50px;
+  transition: background-position .3s;
+  background-size: 310% 100%;
+  box-shadow: 0 4px 15px 0 rgba(126,52,161,.75);
+  &:hover {
+    background-position: 100% 0;
+    //animation: jelly 0.5s;
+  }
+}
+
+html, body {
+  font-family: $roboto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #ffffff;
+  height: 100%;
+  overflow-x: hidden;
+
+  .main {
+    flex-grow: 1;
+  }
+}
+
+.content {
+  max-width: 1530px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header {
+  box-shadow: 0 4px 8px 0 rgba(225, 225, 225, 0.75);
+  .block-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    max-width: 100px;
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    .link {
+      padding: 25px 35px;
+      background-color: #ebebeb;
+      @extend %hover-animation;
+    }
+  }
+}
+
+.main {
+  margin-top: 45px;
+}
+
+.footer {
+  padding: 15px 0;
+  margin-top: 50px;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 40px;
+  letter-spacing: 3px;
+}
+
+.card-user {
+  max-width: 300px;
+  margin: 70px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .avatar {
+    display: block;
+    max-width: 130px;
+  }
+  .name {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 30px;
+  }
+  .email {
+    @extend %link;
+  }
+  .date {
+    margin-top: 15px;
+  }
+  .posts-link {
+    @extend %link;
+    margin-top: 20px;
+  }
+}
+
+//forms
+.form-create-post {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 300px;
+  margin: 100px auto 0;
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    &.file {
+      .input {
+        margin: 10px 0;
+      }
+    }
+    .label {
+      margin-bottom: 8px;
+    }
+    &:not(.file) {
+      .input, .textarea {
+        box-shadow: 0 0 4px 0 rgba(#000000, 0.4);
+        transition: box-shadow .3s;
+        &:focus, &:active {
+          box-shadow: 0 0 4px 0 rgba(#000000, 0.7);
+        }
+      }
+    }
+    .input {
+      display: block;
+      border: none;
+      background-color: transparent;
+      width: 100%;
+      height: 60px;
+      padding: 5px 20px;
+    }
+    .textarea {
+      resize: none;
+      width: 100%;
+      min-height: 100px;
+      display: block;
+      padding: 10px 20px;
+      border: none;
+    }
+  }
+  .form-btn {
+    border: none;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    &::-moz-focus-inner {
+      border: 0;
+    }
+    margin: 20px auto 0;
+    font-size: 19px;
+    letter-spacing: 1px;
+  }
+}
+
+.form-delete {
+  .btn {
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+}
+
+// pages
+.page-main {
+    .main {
+      .block-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        .link {
+          display: block;
+          @extend %link;
+          color: $green;
+          font-size: 70px;
+          letter-spacing: 5px;
+          word-spacing: 25px;
+          &:before {
+            background-color: $green;
+            height: 5px;
+          }
+        }
+      }
+    }
+}
+
+.page-post-archive {
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 300px));
+    grid-gap: 30px;
+    .card {
+      transition: transform .3s, box-shadow .3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.2);
+      padding: 0 10px 20px;
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.2);
+      }
+      .image-box {
+        .image {
+          display: block;
+          width: 100%;
+          object-fit: cover;
+        }
+      }
+      .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .card-title {
+          font-size: 25px;
+          text-align: center;
+        }
+        .card-text {
+          text-align: center;
+          font-size: 14px;
+          margin: 25px 0 25px;
+        }
+        .btn {
+          margin: auto auto 0 auto;
+        }
+      }
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 30px;
+        .author {
+          @extend %link;
+          &:before {
+            background-color: $green;
+          }
+        }
+      }
+    }
+  }
+}
+
+.page-post-single {
+  .article {
+    max-width: 1100px;
+    margin: 0 auto;
+    .article-image {
+      display: block;
+      max-width: 250px;
+      margin: 0 auto;
+    }
+    .article-content {
+      margin-top: 50px;
+      p {
+        margin: 0 0 30px;
+      }
+      strong {
+        font-weight: bold;
+        font-size: 25px;
+      }
+      ol {
+        padding-left: 30px;
+        margin-top: 15px;
+        li {
+          position: relative;
+          &:before {
+            content: '✔';
+            display: block;
+            position: absolute;
+            left: -30px;
+            top: -2px;
+          }
+        }
+      }
+    }
+    .article-footer {
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .article-created-at {
+        span {
+          font-weight: bold;
+          color: $green;
+        }
+      }
+      .article-created-by {
+        @extend %link;
+      }
+    }
+  }
+}
+
+.page-user {
+  .main .block-content {
+    .title {
+      text-align: center;
+    }
+  }
+}
+
+.page-user-posts {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  .header {
+    width: 100%;
+  }
+  .footer {
+    width: 100%;
+    margin-top: auto;
+  }
+  .main {
+    flex-grow: initial;
+    flex-shrink: 0;
+    @include width(9);
+  }
+  .sidebar {
+    margin-top: 45px;
+    padding: 0 20px;
+    @include width(3);
+    .posts-box {
+      .post {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        &:not(:last-child) {
+          margin-bottom: 30px;
+        }
+        &:hover {
+          .image-box {
+            animation: jelly .5s;
+          }
+        }
+        .image-box {
+          display: block;
+          width: 100%;
+          max-width: 90px;
+          .image {
+            display: block;
+            width: 100%;
+          }
+        }
+        .description, .date {
+          font-size: 13px;
+        }
+        .description {
+          text-align: center;
+        }
+      }
+    }
+  }
+}

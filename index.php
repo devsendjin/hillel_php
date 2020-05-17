@@ -1,93 +1,106 @@
 <?php
 
-require_once 'vendor/autoload.php';
-
 /*
-Default values for algorithms
+- Список всех постов (главная страница): /posts
+- Детальная страница поста /post/{id} (например /post/4 для отображения 4-го поста)
+- Список постов пользователя: /user/{id}/posts
+- Информация о пользователе: /user/{id}
+*/
 
-PASSWORD_DEFAULT
-    array (size=1)
-      'cost' => int 10
+require_once 'vendor/autoload.php';
+require_once 'config/twig.php';
+require_once 'config/doctrine.php';
 
-PASSWORD_ARGON2I
-      'memory_cost' => int 65536
-      'time_cost' => int 4
-      'threads' => int 1
+use App\API\PostAddController;
+use App\API\PostDeleteController;
+use App\Controller\IndexController;
+use App\Controller\UserController;
+use App\Controller\UserPostsController;
+use App\GlobalConfig;
+use Aura\Router\RouterContainer;
+use App\Controller\PostArchiveController;
+use App\Controller\PostSingleController;
 
-PASSWORD_ARGON2ID
-    array (size=3)
-      'memory_cost' => int 65536
-      'time_cost' => int 4
-      'threads' => int 1
- */
+$routerContainer = new RouterContainer();
 
-/* Bcrypt */
+$map = $routerContainer->getMap();
 
-// 1. Хеширование
-/*$password = new \App\Password('12345678');
-$bcrypt = new \App\Algorithm\Bcrypt(null, 4);
-$hash = $password->hash($bcrypt); //$2y$04$iK9k7hG3A3TUFsGirjAcPO2P2EHYnOllZcS1KwSr1ZglmtJVT7ZNa
-var_dump($hash);*/
+$map->route('blog.read', '/', function () {
+    (new IndexController())->render();
+});
+$map->route('posts.read', '/posts', function ($request) {
+    (new PostArchiveController())->render();
+});
 
+$map->route('post.read', '/post/{id}', function ($request, $response) {
+    $id = (int) $request->getAttribute('id');
+    (new PostSingleController($id))->render();
+    return $response;
+});
 
-// 2. Проверка хеша
-/*$password = new \App\Password('12345678');
-$var1 = $password->verify('$2y$04$iK9k7hG3A3TUFsGirjAcPO2P2EHYnOllZcS1KwSr1ZglmtJVT7ZNa'); //true
-$var2 = $password->verify('$2y$04$iK9k7hG3A3TUFsGirjAcPO2P2EHYnOllZcS1KwSr1ZglmtJVT7ZNa1'); //false
-var_dump($var1);
-var_dump($var2);*/
+$map->route('user.read', '/user/{id}', function ($request, $response) {
+    $id = (int) $request->getAttribute('id');
+    (new UserController($id))->render();
+    return $response;
+});
 
+$map->route('user_posts.read', '/user/{id}/posts', function ($request, $response) {
+    $id = (int) $request->getAttribute('id');
+    (new UserPostsController($id))->render();
+    return $response;
+});
 
-// 3. Проверка на соответствие алгоритму
-/*$bcrypt = new \App\Algorithm\Bcrypt();
-$password = new \App\Password('12345678');
-$hash = $password->hash($bcrypt);
-$var1 = \App\Password::needsRehash($hash, $bcrypt); //false
-$var2 = \App\Password::needsRehash($hash, new \App\Algorithm\Argon2i(null, 12)); //true
-var_dump($var1);
-var_dump($var2);*/
+// AJAX
+$map->post('post.add', '/post-create', function () {
+    (new PostAddController($_POST))->savePost();
+});
 
+$map->post('post.delete', '/post-delete', function () {
+    (new PostDeleteController($_POST))->deletePost();
+});
 
-/* Argon2i */
+$matcher = $routerContainer->getMatcher();
 
-// 1. Хеширование
-/*$argon2i = new \App\Algorithm\Argon2i();
-$password = new \App\Password('12345678');
-$hash = $password->hash($argon2i); //$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE
-var_dump($hash);*/
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
 
-// 2. Проверка хеша
-/*$password = new \App\Password('12345678');
-$var1 = $password->verify('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE'); //true
-$var2 = $password->verify('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE1'); //false
-var_dump($var1);
-var_dump($var2);*/
+# Psr\Http\Message\ServerRequestInterface $request
+$route = $matcher->match($request);
 
-// 3. Проверка на соответствие алгоритму
-/*$argon2i = new \App\Algorithm\Argon2i();
-$var1 = \App\Password::needsRehash('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE', $argon2i); //false
-$var2 = \App\Password::needsRehash('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE1', new \App\Algorithm\Bcrypt(null, 11)); //true
-var_dump($var1);
-var_dump($var2);*/
+if ($route) {
+    # dispatching a route
+    # transfer attribute to request
+    foreach ($route->attributes as $key => $val) {
+        $request = $request->withAttribute($key, $val);
+    }
 
-/* Argon2id */
+    # get the handler and call handler to process request
+    $callable = $route->handler;
+    $response = $callable($request, new \Zend\Diactoros\Response);
+} else {
+    # handling match failure
+    // get the first of the best-available non-matched routes
+    $failedRoute = $matcher->getFailedRoute();
 
-// 1. Хеширование
-/*$argon2id = new \App\Algorithm\Argon2id();
-$password = new \App\Password('12345678');
-$hash = $password->hash($argon2id); //$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw
-var_dump($hash);*/
-
-// 2. Проверка хеша
-/*$password = new \App\Password('12345678');
-$var1 = $password->verify('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw'); //true
-$var2 = $password->verify('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw1'); //false
-var_dump($var1);
-var_dump($var2);*/
-
-// 3. Проверка на соответствие алгоритму
-/*$argon2id = new \App\Algorithm\Argon2id();
-$var1 = \App\Password::needsRehash('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw', $argon2id); //false
-$var2 = \App\Password::needsRehash('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw', new \App\Algorithm\Argon2i(100)); //true
-var_dump($var1);
-var_dump($var2);*/
+    // which matching rule failed?
+    switch ($failedRoute->failedRule) {
+        case 'Aura\Router\Rule\Allows':
+            // 405 METHOD NOT ALLOWED
+            // Send the $failedRoute->allows as 'Allow:'
+            http_response_code(405);
+            break;
+        case 'Aura\Router\Rule\Accepts':
+            // 406 NOT ACCEPTABLE
+            http_response_code(406);
+            break;
+        default:
+            // 404 NOT FOUND
+            http_response_code(404);
+            break;
+    }
+}

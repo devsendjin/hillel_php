@@ -1,3 +1,6 @@
 .idea/
-mysql/
+node_modules/
 vendor/
+mysql/
+composer.lock
+var/cache/twig/*

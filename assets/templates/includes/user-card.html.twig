@@ -1,0 +1,13 @@
+<div class="card-user">
+    <img src="{{ imagesUrlUser ~ user.avatarUrl }}"
+         alt="{{ user.name }}"
+         title="{{ user.name }}"
+         class="avatar wow animate__animated animate__bounceInRight" data-wow-duration="1s">
+    <div class="name wow animate__animated animate__bounceInLeft" data-wow-duration="1s">{{ user.name }}</div>
+    <a href="mailto:{{ user.email }}" class="email wow animate__animated animate__bounceInRight" data-wow-duration="1s">{{ user.email }}</a>
+    <div class="date wow animate__animated animate__bounceInLeft" data-wow-duration="1s">created {{ user.createdAt|date('d.m.y') }}</div>
+    {% if postsLink == true %}
+    <a href="{{ '/user/' ~ user.id ~ '/posts' }}"
+       class="posts-link wow animate__animated animate__bounceInRight" data-wow-duration="1s">Check out my posts 📚 :)</a>
+    {% endif %}
+</div>

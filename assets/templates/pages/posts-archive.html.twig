@@ -1,0 +1,60 @@
+{% extends 'index.html.twig' %}
+
+{% block head %}
+    {% block css_files %}
+        {{ parent() }}
+    {% endblock %}
+    {% block title %}<title>Posts page</title>{% endblock %}
+{% endblock %}
+
+{% block pageClass %}page-post-archive{% endblock %}
+
+{% block content %}
+    <div class="cards">
+        {% if postsData %}
+            {% for postData in postsData %}
+                <div class="card wow animate__animated animate__flipInY" data-wow-delay="{{ loop.index * 0.3 }}s" data-wow-duration="1s">
+                    <a href="{{ postsUrl ~ postData.post.id }}" class="image-box">
+                        <img class="image" src="{{ imagesUrlPost ~ postData.post.imageUrl }}" alt="{{ postData.post.title }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ postData.post.title }}</h5>
+                        <p class="card-text">{{ postData.post.shortDescription }}</p>
+                        <a href="{{ postsUrl ~ postData.post.id }}" class="btn">Read the post</a>
+                    </div>
+                    <div class="card-footer">
+                        <div class="date">{{ postData.post.createdAt|date('d.m.y') }}</div>
+                        <a href="{{ '/user/' ~ postData.user.id }}" class="author"><span>{{ postData.user.name }}</span></a>
+                    </div>
+                    <form action="{{ '/post-delete' }}"
+                          class="form-delete js-form-delete-post">
+                        <input type="hidden" name="post-id" value="{{ postData.post.id }}">
+                        <input type="hidden" name="user-id" value="{{ postData.user.id }}">
+                        <button type="submit" class="btn form-btn">Delete post</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <form action="{{ '/post-create' }}"
+          class="form-create-post js-form-create-post">
+        <label class="form-group">
+            <span class="label">Post title</span>
+            <input type="text" name="title" class="input" required>
+        </label>
+        <label class="form-group">
+            <span class="label">Content</span>
+            <textarea name="content" class="textarea"></textarea>
+        </label>
+        <label class="form-group">
+            <span class="label">Short description</span>
+            <input type="text" name="description" class="input" required>
+        </label>
+        <label class="form-group">
+            <span class="label">User id ( 1 or 2 )</span>
+            <input type="number" name="user-id" class="input" required>
+        </label>
+        <input type="hidden" name="post-create">
+        <button type="submit" class="btn form-btn">Create post</button>
+    </form>
+{% endblock %}

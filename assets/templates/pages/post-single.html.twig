@@ -1,0 +1,25 @@
+{% extends 'index.html.twig' %}
+
+{% block head %}
+    {% block css_files %}
+        {{ parent() }}
+    {% endblock %}
+    {% block title %}<title>Post page</title>{% endblock %}
+{% endblock %}
+
+{% block pageClass %}page-post-single{% endblock %}
+
+{% block content %}
+    <article class="article">
+        <h1 class="page-title wow animate__animated animate__fadeIn" data-wow-duration="1s">{{ post.title }}</h1>
+        <img src="{{ imagesUrlPost ~ post.imageUrl }}"
+             alt="{{ post.title }}"
+             title="{{ post.title }}"
+             class="article-image wow animate__animated animate__fadeIn" data-wow-duration="1s">
+        <div class="article-content wow animate__animated animate__fadeIn" data-wow-duration="1s">{{ post.content|raw }}</div>
+        <div class="article-footer">
+            <span class="article-created-at wow animate__animated animate__fadeIn" data-wow-duration="1s">Date <span>{{ post.createdAt|date('d.m.y') }}</span></span>
+            <a href="{{ '/user/' ~ user.id }}" class="article-created-by wow animate__animated animate__fadeIn" data-wow-duration="1s">Created by <span>{{ user.name }}</span></a>
+        </div>
+    </article>
+{% endblock %}

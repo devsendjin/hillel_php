@@ -1,121 +1,23 @@
-Хеширование паролей
+ORM Doctrine. Миграции. Связи. Внешние ключи. MyIsam vs InnoDB
+Страницы:
+- Список всех постов (главная страница): /posts
+- Детальная страница поста /post/{id} (например /post/4 для отображения 4-го поста)
+- Список постов пользователя: /user/{id}/posts
+- Информация о пользователе: /user/{id}
 
-Дан интерфейс алгоритма хеширования пароля.
-<?php
-declare(strict_types=1);
+Используем все что знаем об MVC:
+- роутер для маршрутизации страниц (разрешается и приветствуется использование сторонней библиотеки, например https://github.com/auraphp/Aura.Router);
+- twig для шаблонов страниц;
+- doctrine для моделей, связей и миграций;
+- Для оформления - bootstrap.
 
-namespace App\Algorithm;
+Шаги:
+1. Создать сущность User и Post (поля определяем сами и связи тоже)
+2. Создать миграции для создания таблиц и тестовых данных (несколько пользователей, и у каждого по несколько постов)
+3. Создать страницу списка постов (только названия со ссылкой на продолжение поста)
+4. На странице конкретного поста отображаем ссылку на автора статьи (User).
+5. На странице автора статьи нужно отобразить все посты этого автора (пользователя).
 
-/**
- * Interface AlgorithmInterface
- * @package Hash\Algorithm
- */
-interface AlgorithmInterface
-{
-    /**
-     * @return string
-     */
-    public function getIdentifier(): string;
-
-    /**
-     * @return array
-     */
-    public function getOptions(): array;
-}
-
-Метод getIdentifier возвращает номер алгоритма. Номера алгоритом можно достать и констант на странице https://www.php.net/manual/ru/function.password-hash.php
-Метод getOptions возвращает массив настроек того или иного алгоритма.
-
-Далее имеется интерфейс Пароль.
-<?php
-declare(strict_types=1);
-
-namespace App;
-
-use App\Algorithm\AlgorithmInterface;
-
-/**
- * Interface PasswordInterface
- * @package Hash
- */
-interface PasswordInterface
-{
-    /**
-     * @param AlgorithmInterface $algorithm
-     * @return string
-     */
-    public function hash(AlgorithmInterface $algorithm): string;
-
-    /**
-     * @param string $hash
-     * @return bool
-     */
-    public function verify(string $hash): bool;
-
-    /**
-     * @param $hash
-     * @param AlgorithmInterface $algorithm
-     * @return bool
-     */
-    public static function needsRehash($hash, AlgorithmInterface $algorithm): bool;
-}
-
-Методы hash, verify и needsRehash соответсвтуют аналогичным php-шным функциям для работы с паролями и их хешами.
-Задача:
-Создать три класса: Bcrypt, Argon2i, Argon2id, которые будут имплементировать AlgorithmInterface.
-Создать класс Password, который будет имплементировать PasswordInterface.
-Argon2i и Argon2id реализовать через наследование от абстрактного класса для сокращения повторяющегося кода. (сначала можете реализовать без наследования, потом поймёте, что можно сократить и воспользуйтесь наследованием).
-
-В конечном результате код из indexphp должен стать рабочим:
-<?php
-
-require_once '../vendor/autoload.php';
-
-$password = new \App\Password('12345678');
-
-/* Bcrypt */
-
-// 1. Хеширование
-$bcrypt = new \App\Algorithm\Bcrypt();
-$password->hash($bcrypt); //$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6
-
-// 2. Проверка хеша
-$password = new \App\Password('12345678');
-$password->verify('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6'); //true
-$password->verify('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp61'); //false
-
-// 3. Проверка на соответствие алгоритму
-\App\Password::needsRehash('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6', $bcrypt); //false
-\App\Password::needsRehash('$2y$10$aputweCKAmAsTho8TL24juyTKoUZPq3nnc2.Ptfgc3hAPsIuiosp6', new \App\Algorithm\Bcrypt(null, 12)); //true
-
-/* Argon2i */
-
-// 1. Хеширование
-$argon2i = new \App\Algorithm\Argon2i();
-$password->hash($argon2i); //$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE
-
-// 2. Проверка хеша
-$password = new \App\Password('12345678');
-$password->verify('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE'); //true
-$password->verify('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE1'); //false
-
-// 3. Проверка на соответствие алгоритму
-\App\Password::needsRehash('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE', $argon2i); //false
-\App\Password::needsRehash('$argon2i$v=19$m=65536,t=4,p=1$SUswbUhUVlM1Y2hYanU4bw$NtYLbns8XMOGeitzNzRoLN8cXcDhvUf9CxL5SOMLYRE1', new \App\Algorithm\Argon2i(100)); //true
-
-/* Argon2id */
-
-// 1. Хеширование
-$argon2id = new \App\Algorithm\Argon2id();
-$password->hash($argon2id); //$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw
-
-// 2. Проверка хеша
-$password = new \App\Password('12345678');
-$password->verify('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw'); //true
-$password->verify('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw1'); //false
-
-// 3. Проверка на соответствие алгоритму
-\App\Password::needsRehash('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw', $argon2id); //false
-\App\Password::needsRehash('$argon2id$v=19$m=65536,t=4,p=1$VUloUnNCM0RkeGxob1R0Tw$JsJTGp2rDhcMdyM1hcHsVZurCGzkMm2ggAvY/CEitJw', new \App\Algorithm\Argon2id(100)); //true
-
-Изучите конечный результат и приступайте к реализации классов.
+Задания со звёздочкой (для самых отчаянных):
+- Создать форму создания поста.
+- Создать возможность удаления поста в списке.

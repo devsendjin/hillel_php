@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible"
+              content="ie=edge">
+        {% block css_files %}
+            <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap" rel="stylesheet">
+            <link rel="stylesheet"
+                  href="/assets/css/styles.css">
+        {% endblock %}
+        {% block title %}<title>Main page</title>{% endblock %}
+    {% endblock %}
+</head>
+<body class="{% block pageClass %}page-main{% endblock %}" data-site-url="/">
+<header class="header">
+    <div class="content block-content">
+        <a class="logo wow animate__animated animate__rotateInDownLeft" href="/">
+            <img src="{{ imagesUrl }}logo.jpg"
+                 alt="Blog"
+                 title="Blog">
+        </a>
+        <nav class="nav">
+            <a class="link wow animate__animated animate__rotateInDownRight" href="/posts">Posts</a>
+        </nav>
+    </div>
+</header>
+<main class="main">
+    <div class="content block-content">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+{% block sidebar %}{% endblock %}
+<footer class="footer">
+    <div class="content block-content">
+        <span class="wow animate__animated animate__bounceInLeft" data-wow-duration="1s">
+            &copy; {{ 'now'|date('Y') }}, Blog, created by Anatoliy Skichko :)
+        </span>
+    </div>
+</footer>
+{% block js_files %}
+    <script src="/assets/js/bundle.js"></script>
+{% endblock %}
+</body>
+</html>

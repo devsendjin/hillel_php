@@ -1,0 +1,18 @@
+$cols: 12 !default;
+$gutter: 40px !default;
+
+@function calcWidth($num, $gutterShift: 0px, $cols: $cols, $gutter: $gutter) {
+  @return calc(((100% - (#{$gutter} * (#{$cols} - 1))) / #{$cols}) * #{$num} + #{$gutter} * (#{$num} - 1) + #{$gutterShift});
+}
+
+@mixin width($num, $gutterShift: 0px, $cols: $cols, $gutter: $gutter) {
+  width: calcWidth($num, $gutterShift, $cols, $gutter);
+}
+
+@mixin pullLeft($num, $gutterShift: 0px, $property: margin, $cols: $cols, $gutter: $gutter) {
+  #{$property}-left: calcWidth($num, $gutterShift, $cols, $gutter);
+}
+
+@mixin pullRight($num, $gutterShift: 0px, $property: margin, $cols: $cols, $gutter: $gutter) {
+  #{$property}-right: calcWidth($num, $gutterShift, $cols, $gutter);
+}

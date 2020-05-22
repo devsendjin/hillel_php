@@ -14,8 +14,8 @@ localhost:8085
 composer dump-autoload
 composer install
 
-vendor/bin/doctrine orm:schema-tool:create
-vendor/bin/doctrine-migrations execute --up 20200509231922
+vendor/bin/doctrine-migrations execute --up 20200522154921
+vendor/bin/doctrine-migrations execute --up 20200522155808
 
 Если нужно править стили / js с помощью сборщика (gulp):
 npm install && gulp

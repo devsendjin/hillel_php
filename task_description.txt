@@ -1,0 +1,12 @@
+Поднять проект на Symfony внутри докер-контейнера
+Задача:
+Развернуть контейнеры:
+    apache + php7
+    mysql
+
+Установить и настроить Symfony 5 внутри контейнера
+Настроить подключение с базой данных
+
+Доп. инфо:
+    Как настроить симфони с апачем: https://symfony.com/doc/current/setup/web_server_configuration.html
+    Document root должен смотреть не в /var/www/html как по умолчанияю в апаче, а в папку /public, где лежит index.php
